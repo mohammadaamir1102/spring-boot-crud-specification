@@ -2,6 +2,8 @@ package com.spec.controller;
 
 import com.spec.common.dto.PaginationDTO;
 import com.spec.common.dto.ServiceException;
+import com.spec.dto.CustomerDetailDTO;
+import com.spec.entity.CustomerDetail;
 import com.spec.request.CustomerDetailReqDTO;
 import com.spec.request.CustomerDetailSearchOperation;
 import com.spec.response.CustomerDetailResDTO;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -58,6 +61,24 @@ public class CustomerDetailController {
     public Map getCustomerDetailBySearchCriteria(@RequestBody CustomerDetailSearchOperation customerDetailSearchOperation) throws ServiceException {
         log.info("inside CustomerDetailController, getCustomerDetailBySearchCriteria method called !!");
         return customerDetailService.getCustomerDetailBySearchCriteria(customerDetailSearchOperation);
+    }
+
+    @GetMapping(value = "countByFirstName/{firstName}")
+    public Long countByFirstName(@PathVariable String firstName){
+        log.info("inside CustomerDetailController, countByFirstName method called !!");
+        return customerDetailService.countByFirstName(firstName);
+    }
+
+    @GetMapping(value = "findByFirstNameAndLastName/{page}/{offset}")
+    public List<CustomerDetail> findByFirstNameAndLastName(@PathVariable Long page,@PathVariable Long offset,@RequestParam String firstName, @RequestParam String lastName){
+        log.info("inside CustomerDetailController, countByFirstName method called !!");
+        return customerDetailService.findByFirstNameAndLastName(firstName,lastName);
+    }
+
+    @PostMapping(value = "findByIdIn")
+    public List<CustomerDetail> findByIdIn(@RequestBody CustomerDetailDTO customerDetailDTO){
+        log.info("inside CustomerDetailController, countByFirstName method called !!");
+        return customerDetailService.findByIdIn(customerDetailDTO.getId());
     }
 
 }

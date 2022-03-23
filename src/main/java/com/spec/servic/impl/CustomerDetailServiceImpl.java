@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -114,13 +115,34 @@ public class CustomerDetailServiceImpl implements CustomerDetailService {
         return mapData;
     }
 
+    @Override
+    public Long countByFirstName(String firstName) {
+        log.info("inside CustomerDetailServiceImpl, countByFirstName method called!!");
+        return customerDetailRepository.countByFirstName(firstName);
+    }
+
+    @Override
+    public List<CustomerDetail> findByFirstNameAndLastName(String firstName, String lastName) {
+        log.info("inside CustomerDetailServiceImpl, findByFirstNameAndLastName method called!!");
+        return customerDetailRepository.findByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @Override
+    public List<CustomerDetail> findByIdIn(List<Long> id) {
+        log.info("inside CustomerDetailServiceImpl, findByFirstNameAndLastName method called!!");
+        return customerDetailRepository.findByIdIn(id);
+    }
+
     private Specification<CustomerDetail> getQuerySpecification(CustomerDetailSearchOperation customerDetailSearchOperation) {
         return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicate = new ArrayList<>();
 
             if (customerDetailSearchOperation.getFirstName() != null && !customerDetailSearchOperation.getFirstName().isEmpty()) {
-                predicate.add(criteriaBuilder.equal(root.get("firstName"),customerDetailSearchOperation.getFirstName()));
+                predicate.add(criteriaBuilder.equal(root.get("firstName"), customerDetailSearchOperation.getFirstName()));
+            }
+            if (customerDetailSearchOperation.getLastName() != null && !customerDetailSearchOperation.getLastName().isEmpty()) {
+                predicate.add(criteriaBuilder.equal(root.get("lastName"), customerDetailSearchOperation.getLastName()));
             }
             return criteriaBuilder.or(predicate.toArray(new javax.persistence.criteria.Predicate[predicate.size()]));
         };
