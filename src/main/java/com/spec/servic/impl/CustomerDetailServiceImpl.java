@@ -1,17 +1,17 @@
 package com.spec.servic.impl;
 
-import com.spec.common.dto.ErrorConstant;
-import com.spec.common.dto.PaginationDTO;
-import com.spec.common.dto.ServiceError;
-import com.spec.common.dto.ServiceException;
+import com.spec.common.dto.*;
 import com.spec.common.dto.service.PaginationService;
 import com.spec.entity.CustomerDetail;
 import com.spec.repo.CustomerDetailRepository;
 import com.spec.request.CustomerDetailReqDTO;
+import com.spec.request.CustomerDetailReqDynamicQueryDTO;
 import com.spec.request.CustomerDetailSearchOperation;
 import com.spec.response.CustomerDetailResDTO;
 import com.spec.servic.CustomerDetailService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Cacheable;
 import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,10 +134,59 @@ public class CustomerDetailServiceImpl implements CustomerDetailService {
         return customerDetailRepository.findByIdIn(id);
     }
 
+    @Override
+    public Map getDataWithDynamicQuery(CustomerDetailReqDynamicQueryDTO customerDetailReqDynamicQueryDTO) throws ServiceException {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setOffset(customerDetailReqDynamicQueryDTO.getOffset().intValue());
+        paginationDTO.setPageNumber(customerDetailReqDynamicQueryDTO.getPageNumber().intValue());
+        Page<CustomerDetail> CustomerDetailDynamicValue = customerDetailRepository.findAll(getDynamicQuerySpecification(customerDetailReqDynamicQueryDTO), paginationService.getPagination(paginationDTO));
+        return null;
+    }
+
+    @Override
+    public Optional<CustomerDetail> findById(Long id) throws ServiceException {
+        Optional<CustomerDetail> customerDetailById = customerDetailRepository.findById(id);
+        if (!customerDetailById.isPresent()) {
+            ServiceError serviceError = new ServiceError(ErrorConstant.CUSTOMER_DETAIL_NOT_FOUND, ErrorConstant.CUSTOMER_DETAIL_NOT_FOUND_EXCEPTION);
+            throw new ServiceException(HttpStatus.BAD_REQUEST, serviceError);
+        }
+        return Optional.of(customerDetailById.get());
+    }
+
+    @Override
+//    @Cacheable(value = CommonCacheEnum.Constants.CustomerDetailById,)
+    public CustomerDetailResDTO getCustomerDetailByIdCache(Long customerDetailId) {
+        return null;
+    }
+
+//    @Override
+//    public Integer updateWithJpql(Long id, String address, String firstName) {
+//        return customerDetailRepository.updateTables(id,address,firstName);
+//    }
+
+    private Specification<CustomerDetail> getDynamicQuerySpecification(CustomerDetailReqDynamicQueryDTO customerDetailReqDynamicQueryDTO) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicate = new ArrayList<>();
+//            if (!customerDetailReqDynamicQueryDTO.getId().isEmpty() && customerDetailReqDynamicQueryDTO.getId() !=null){
+//                predicate.add(criteriaBuilder.in(root.get(("id"),customerDetailReqDynamicQueryDTO.getId())));
+//            }
+            if(customerDetailReqDynamicQueryDTO.getFromDate() !=null){
+                predicate.add(criteriaBuilder.lessThan(root.get("fromDate"),customerDetailReqDynamicQueryDTO.getFromDate()));
+            }
+            if(customerDetailReqDynamicQueryDTO.getToDate() !=null){
+                predicate.add(criteriaBuilder.lessThan(root.get("toDate"),customerDetailReqDynamicQueryDTO.getToDate()));
+            }
+
+            return null;
+        };
+
+    }
+
     private Specification<CustomerDetail> getQuerySpecification(CustomerDetailSearchOperation customerDetailSearchOperation) {
         return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicate = new ArrayList<>();
+
 
             if (customerDetailSearchOperation.getFirstName() != null && !customerDetailSearchOperation.getFirstName().isEmpty()) {
                 predicate.add(criteriaBuilder.equal(root.get("firstName"), customerDetailSearchOperation.getFirstName()));

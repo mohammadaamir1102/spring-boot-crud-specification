@@ -3,7 +3,9 @@ package com.spec.controller;
 import com.spec.common.dto.PaginationDTO;
 import com.spec.common.dto.ServiceException;
 import com.spec.dto.CustomerDetailDTO;
+import com.spec.dto.CutomerDetailId;
 import com.spec.entity.CustomerDetail;
+import com.spec.repo.CustomerDetailRepository;
 import com.spec.request.CustomerDetailReqDTO;
 import com.spec.request.CustomerDetailSearchOperation;
 import com.spec.response.CustomerDetailResDTO;
@@ -12,8 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -23,6 +27,9 @@ public class CustomerDetailController {
 
     @Autowired
     CustomerDetailService customerDetailService;
+
+    @Autowired
+    CustomerDetailRepository customerDetailRepository;
 
     @PostMapping(value = "/save")
     public CustomerDetailResDTO saveCustomerDetail(@RequestBody CustomerDetailReqDTO customerDetailReqDTO) {
@@ -64,21 +71,47 @@ public class CustomerDetailController {
     }
 
     @GetMapping(value = "countByFirstName/{firstName}")
-    public Long countByFirstName(@PathVariable String firstName){
+    public Long countByFirstName(@PathVariable String firstName) {
         log.info("inside CustomerDetailController, countByFirstName method called !!");
         return customerDetailService.countByFirstName(firstName);
     }
 
     @GetMapping(value = "findByFirstNameAndLastName/{page}/{offset}")
-    public List<CustomerDetail> findByFirstNameAndLastName(@PathVariable Long page,@PathVariable Long offset,@RequestParam String firstName, @RequestParam String lastName){
+    public List<CustomerDetail> findByFirstNameAndLastName(@PathVariable Long page, @PathVariable Long offset, @RequestParam String firstName, @RequestParam String lastName) {
         log.info("inside CustomerDetailController, countByFirstName method called !!");
-        return customerDetailService.findByFirstNameAndLastName(firstName,lastName);
+        return customerDetailService.findByFirstNameAndLastName(firstName, lastName);
     }
 
     @PostMapping(value = "findByIdIn")
-    public List<CustomerDetail> findByIdIn(@RequestBody CustomerDetailDTO customerDetailDTO){
+    public List<CustomerDetail> findByIdIn(@RequestBody CustomerDetailDTO customerDetailDTO) {
         log.info("inside CustomerDetailController, countByFirstName method called !!");
         return customerDetailService.findByIdIn(customerDetailDTO.getId());
     }
+
+    @GetMapping(value = "getCustomerNameById/{id}")
+    public List<String> findById(@PathVariable Long id) throws ServiceException {
+        List<String> getNames = new ArrayList<>();
+        Optional<CustomerDetail> firstNameAndLastName = customerDetailService.findById(id);
+        getNames.add(firstNameAndLastName.get().getFirstName());
+        getNames.add(firstNameAndLastName.get().getLastName());
+        return getNames;
+
+
+    }
+
+    /*Below api for cache practice*/
+    @GetMapping(value = "getCustomerDetailByIdCache/{id}")
+    public CustomerDetailResDTO getCustomerDetailByIdCache(@PathVariable Long customerDetailId) throws ServiceException {
+        log.info("inside CustomerDetailController, getCustomerDetailById method called !!");
+        return customerDetailService.getCustomerDetailByIdCache(customerDetailId);
+    }
+
+
+    @PutMapping(value = "updateRecordByNativeQuery/{id}/{address}/{firstName}")
+    public String findBYID(@PathVariable Long id, @PathVariable String address, @PathVariable String firstName) {
+        customerDetailRepository.updateTables(id, address, firstName);
+        return "updated";
+    }
+
 
 }
