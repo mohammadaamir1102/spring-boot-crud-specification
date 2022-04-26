@@ -5,5 +5,7 @@ public class ErrorConstant {
 	public static final String SOMETHING_WENT_WRONG = "Something went wrong";
 	public static final String CUSTOMER_DETAIL_NOT_FOUND ="Customer Detail not found";
 	public static final String CUSTOMER_DETAIL_NOT_FOUND_EXCEPTION ="Customer Detail not found Exception";
+	public static final String EXCEL_FORMAT ="Excel format not match";
+	public static final String EXCEL_FORMAT_EXCEPTION ="Excel format not match Exception";
 
 }

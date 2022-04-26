@@ -1,10 +1,13 @@
 package com.spec.controller;
 
+import com.spec.common.dto.ErrorConstant;
 import com.spec.common.dto.PaginationDTO;
+import com.spec.common.dto.ServiceError;
 import com.spec.common.dto.ServiceException;
 import com.spec.dto.CustomerDetailDTO;
 import com.spec.dto.CutomerDetailId;
 import com.spec.entity.CustomerDetail;
+import com.spec.helper.ExcelHelper;
 import com.spec.repo.CustomerDetailRepository;
 import com.spec.request.CustomerDetailReqDTO;
 import com.spec.request.CustomerDetailSearchOperation;
@@ -12,8 +15,11 @@ import com.spec.response.CustomerDetailResDTO;
 import com.spec.servic.CustomerDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +117,18 @@ public class CustomerDetailController {
     public String findBYID(@PathVariable Long id, @PathVariable String address, @PathVariable String firstName) {
         customerDetailRepository.updateTables(id, address, firstName);
         return "updated";
+    }
+
+    //excel read controller
+    @PostMapping("excel-upload")
+    public String saveExcelFile(@RequestParam("file") MultipartFile file) throws IOException, ServiceException {
+        if(ExcelHelper.checkExcelFormat(file)){
+            return customerDetailService.saveExcelFile(file);
+        }else {
+            ServiceError serviceError = new ServiceError(ErrorConstant.EXCEL_FORMAT, ErrorConstant.EXCEL_FORMAT_EXCEPTION);
+            throw new ServiceException(HttpStatus.BAD_REQUEST, serviceError);
+        }
+
     }
 
 

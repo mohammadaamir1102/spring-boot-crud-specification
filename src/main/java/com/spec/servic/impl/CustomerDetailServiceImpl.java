@@ -3,12 +3,14 @@ package com.spec.servic.impl;
 import com.spec.common.dto.*;
 import com.spec.common.dto.service.PaginationService;
 import com.spec.entity.CustomerDetail;
+import com.spec.helper.ExcelHelper;
 import com.spec.repo.CustomerDetailRepository;
 import com.spec.request.CustomerDetailReqDTO;
 import com.spec.request.CustomerDetailReqDynamicQueryDTO;
 import com.spec.request.CustomerDetailSearchOperation;
 import com.spec.response.CustomerDetailResDTO;
 import com.spec.servic.CustomerDetailService;
+import lombok.experimental.Helper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.StringUtil;
@@ -18,9 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Cacheable;
 import javax.persistence.criteria.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,6 +155,13 @@ public class CustomerDetailServiceImpl implements CustomerDetailService {
             throw new ServiceException(HttpStatus.BAD_REQUEST, serviceError);
         }
         return Optional.of(customerDetailById.get());
+    }
+
+    @Override
+    public String saveExcelFile(MultipartFile file) throws IOException {
+        List<CustomerDetail> customerDetails = ExcelHelper.convertExcelToListOfCustomerDetail(file.getInputStream());
+        customerDetailRepository.saveAll(customerDetails);
+        return file.getOriginalFilename() + " is uploaded";
     }
 
     @Override
