@@ -123,7 +123,7 @@ public class CustomerDetailController {
     @PostMapping("excel-upload")
     public String saveExcelFile(@RequestParam("file") MultipartFile file) throws IOException, ServiceException {
         if(ExcelHelper.checkExcelFormat(file)){
-            return customerDetailService.saveExcelFile(file);
+            return customerDetailService.saveExcelFile(file) +" file uploaded ";
         }else {
             ServiceError serviceError = new ServiceError(ErrorConstant.EXCEL_FORMAT, ErrorConstant.EXCEL_FORMAT_EXCEPTION);
             throw new ServiceException(HttpStatus.BAD_REQUEST, serviceError);

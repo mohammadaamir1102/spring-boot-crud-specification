@@ -61,27 +61,24 @@ public class ExcelHelper {
                     Cell cellData = cells.next();
                     switch (cellId) {
                         case 0:
-                            customerDetail.setId((long) cellData.getNumericCellValue());
-                            break;
-                        case 1:
                             customerDetail.setFirstName(cellData.getStringCellValue());
                             break;
-                        case 2:
+                        case 1:
                             customerDetail.setLastName(cellData.getStringCellValue());
                             break;
-                        case 3:
+                        case 2:
                             customerDetail.setDob(cellData.getDateCellValue());
                             break;
-                        case 4:
-                            customerDetail.setMobileNumber(cellData.getStringCellValue());
+                        case 3:
+                            customerDetail.setMobileNumber(String.valueOf(cellData.getNumericCellValue()));
                             break;
-                        case 5:
+                        case 4:
                             customerDetail.setGender(cellData.getStringCellValue());
                             break;
-                        case 6:
+                        case 5:
                             customerDetail.setStatus(cellData.getBooleanCellValue());
                             break;
-                        case 7:
+                        case 6:
                             customerDetail.setAddress(cellData.getStringCellValue());
                             break;
                         default:

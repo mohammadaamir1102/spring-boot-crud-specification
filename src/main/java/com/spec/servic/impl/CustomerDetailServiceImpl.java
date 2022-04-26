@@ -161,7 +161,7 @@ public class CustomerDetailServiceImpl implements CustomerDetailService {
     public String saveExcelFile(MultipartFile file) throws IOException {
         List<CustomerDetail> customerDetails = ExcelHelper.convertExcelToListOfCustomerDetail(file.getInputStream());
         customerDetailRepository.saveAll(customerDetails);
-        return file.getOriginalFilename() + " is uploaded";
+        return file.getOriginalFilename();
     }
 
     @Override
