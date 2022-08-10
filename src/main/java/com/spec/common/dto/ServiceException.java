@@ -6,6 +6,10 @@ import lombok.Getter;
 @Getter
 public class ServiceException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ServiceError serviceError;
 	private HttpStatus status;
 	

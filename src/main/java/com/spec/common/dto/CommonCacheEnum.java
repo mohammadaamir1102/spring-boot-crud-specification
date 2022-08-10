@@ -7,7 +7,11 @@ public enum CommonCacheEnum {
     CommonCacheEnum(String CacheName){}
 
     public static class Constants {
-        public static final String CustomerDetailById = "CustomerDetailById";
+    	
+        private Constants() {
+		}
+
+		public static final String CustomerDetailById = "CustomerDetailById";
     }
 
 }

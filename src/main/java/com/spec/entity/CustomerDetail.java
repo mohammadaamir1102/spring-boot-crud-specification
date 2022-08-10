@@ -3,6 +3,7 @@ package com.spec.entity;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -17,6 +18,7 @@ public class CustomerDetail {
 	@Column(name = "customer_id")
 	private Long id;
 
+	@NotBlank(message = "Please Enter the first name")
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -38,6 +40,9 @@ public class CustomerDetail {
 
 	@Column(name = "address")
 	private String address;
+	
+	@Column(name = "salary")
+	private Double salary;	
 	
 
 }

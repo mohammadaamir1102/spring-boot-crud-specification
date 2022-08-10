@@ -1,15 +1,12 @@
 package com.spec.runner;
 
-import com.spec.common.dto.PaginationDTO;
-import com.spec.entity.CustomerDetail;
-import com.spec.servic.CustomerDetailService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Optional;
+import com.spec.servic.CustomerDetailService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

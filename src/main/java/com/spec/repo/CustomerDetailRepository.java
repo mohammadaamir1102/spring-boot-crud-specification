@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.spec.entity.CustomerDetail;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,7 @@ public interface CustomerDetailRepository extends JpaRepository<CustomerDetail, 
     @Transactional
     @Query(value = "Update CustomerDetail c SET c.address = :address, c.firstName= :firstName where c.id = :id")
     void updateTables(Long id, String address, String firstName);
+    
+    @Query(value= "FROM CustomerDetail WHERE firstName =:firstName AND salary BETWEEN :start AND :end AND dob BETWEEN :startdate AND :endDate")
+    List<CustomerDetail> findSalaryBasedOnRange(String firstName, Double start, Double end, Date startdate, Date endDate);
 }
